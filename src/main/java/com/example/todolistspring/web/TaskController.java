@@ -44,7 +44,6 @@ public class TaskController {
 
         return new ResponseEntity<>(findTasksWithPagination, HttpStatus.OK);
     }
-
     // @GetMapping()
     // public ResponseEntity<List<Task>> getAllTasks(){
     //     List<Task> tasks = taskService.getAllTasks();
