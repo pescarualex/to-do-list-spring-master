@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +55,8 @@ public class TaskService {
 
 
     public Page<TasksResponse> findTasksWithPagination(Pageable pageable) {
+        pageable = PageRequest.of(pageable.getPageNumber(), 16);
+
         LOGGER.info("Getting a page of tasks: page_number->[{}], page_size->[{}], offset->[{}]",
          pageable.getPageNumber(), pageable.getPageSize(), pageable.getOffset());
 
@@ -81,6 +84,39 @@ public class TaskService {
 
         return allTasks.size();
     }
+
+
+
+
+
+
+//TODO: sa faci asta in continuare
+// sa adaugi aici mult content pentru acele taburi din homepage
+//maine sa adaugi ceva aici
+//poate si aici mai adaugi ceva
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public Task updateTask(long id, UpdateTask request) {

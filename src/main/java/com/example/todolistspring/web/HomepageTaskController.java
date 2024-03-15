@@ -22,7 +22,7 @@ public class HomepageTaskController {
         this.taskService = taskService;
     }
 
-@GetMapping("/tasks-number")
+@GetMapping("/total-tasks-number")
     public ResponseEntity<Integer> totalNrOfTasks() {
         Integer allTasks = taskService.getTotalNrOfTasks();
 
