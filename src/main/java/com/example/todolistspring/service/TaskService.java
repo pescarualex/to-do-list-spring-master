@@ -8,6 +8,7 @@ import com.example.todolistspring.transfer.taskDTO.TasksResponse;
 import com.example.todolistspring.transfer.taskDTO.UpdateTask;
 import com.example.todolistspring.transfer.taskDTO.UpdateTaskContent;
 
+import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,37 +73,27 @@ public class TaskService {
         return new PageImpl<>(mappedTasks, pageable, pageOfTasks.getTotalElements());
     }
 
-    // public List<Task> getAllTasks (){
-    //     LOGGER.info("Getting all tasks");
-    //     List<Task> newList = taskRepository.findAll();
 
-    //     return newList;
-    // }
 
     public Integer getTotalNrOfTasks() {
-        LOGGER.info("Getting total number of tasks.");
+        LOGGER.info("Getting total number of all tasks.");
         List<Task> allTasks = taskRepository.findAll();
 
         return allTasks.size();
     }
 
 
+    public List<String> getAllTasksTitles(){
+        LOGGER.info("Getting all tasks title for homepage");
+        List<Task> allTasks = taskRepository.findAll();
+        
+        List<String> tasksTitle = new ArrayList<>();
+        for(Task task : allTasks){
+            tasksTitle.add(task.getTitle());
+        }  
 
-
-
-
-//TODO: sa faci asta in continuare
-// sa adaugi aici mult content pentru acele taburi din homepage
-//maine sa adaugi ceva aici
-//poate si aici mai adaugi ceva
-
-
-
-
-
-
-
-
+        return tasksTitle;
+  }
 
 
 
@@ -109,6 +101,39 @@ public class TaskService {
 
 
 
+  public Integer getThisDayTotalNrOfTasks() {
+    LOGGER.info("Getting total number of today tasks.");
+    List<Task> allTasks = taskRepository.findAll();
+    LocalDate today = LocalDate.now();
+    int countTask = 0;
+
+    for(Task task : allTasks){
+        if (task.getDeadline().isEqual(today)) {
+            countTask++;
+        } else {
+            System.out.println("!!! Tasks not found !!!");
+        }
+    }
+    return countTask;
+}
+
+  public List<String> getThisDayTasksTitle(){
+    LOGGER.info("Getting today tasks title for homepage");
+    List<Task> allTasks = taskRepository.findAll();
+    
+    List<String> thisDayTasksTitle = new ArrayList<>();
+    LocalDate today = LocalDate.now();
+
+    for(Task task : allTasks){
+        if(task.getDeadline().isEqual(today)){
+            thisDayTasksTitle.add(task.getTitle());
+        }
+        
+    }  
+
+    return thisDayTasksTitle;
+}
+  
 
 
 
@@ -116,6 +141,26 @@ public class TaskService {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // public List<Task> getAllTasks (){
+    //     LOGGER.info("Getting all tasks");
+    //     List<Task> newList = taskRepository.findAll();
+
+    //     return newList;
+    // }
 
 
 
