@@ -45,9 +45,6 @@ public class TaskController {
         return new ResponseEntity<>(findTasksWithPagination, HttpStatus.OK);
     }
 
-
-
-
     @GetMapping("/dialog/{id}")
     public ResponseEntity<Task> getOneTask(@PathVariable("id") Long id) {
     Task taskResponse = taskService.getTask(id);
@@ -84,5 +81,17 @@ public class TaskController {
         taskService.deleteTask(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+
+
+
+
+    @GetMapping("/this-day-tasks")
+    public ResponseEntity<Page<TasksResponse>> getThisDayTasksWPage(Pageable pageable) {
+        Page<TasksResponse> getThisDayTasks = taskService.getThisDayTasksWithPagination(pageable);
+
+        return new ResponseEntity<>(getThisDayTasks, HttpStatus.OK);
     }
 }
