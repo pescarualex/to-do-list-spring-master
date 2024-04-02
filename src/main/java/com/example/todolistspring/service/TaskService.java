@@ -56,24 +56,9 @@ public class TaskService {
     }
 
 
-    public Page<TasksResponse> findTasksWithPagination(Pageable pageable) {
-        pageable = PageRequest.of(pageable.getPageNumber(), 16);
-
-        LOGGER.info("Getting all tasks: page_number->[{}], page_size->[{}], offset->[{}]",
-         pageable.getPageNumber(), pageable.getPageSize(), pageable.getOffset());
-
-        Page<Task> pageOfTasks = taskRepository.findAll(pageable);
-
-        List<TasksResponse> mappedTasks = new ArrayList<>();
-        for(Task primaryTask : pageOfTasks.getContent()) {
-            TasksResponse tasksResponse = mapTaskResponse(primaryTask);
-            mappedTasks.add(tasksResponse);
-        }
-
-        return new PageImpl<>(mappedTasks, pageable, pageOfTasks.getTotalElements());
-    }
 
 
+    // get all tasks number, titles and all content
 
     public Integer getTotalNrOfTasks() {
         LOGGER.info("Getting total number of all tasks.");
@@ -95,12 +80,33 @@ public class TaskService {
         return tasksTitle;
   }
 
+    public Page<TasksResponse> findTasksWithPagination(Pageable pageable) {
+        pageable = PageRequest.of(pageable.getPageNumber(), 16);
+
+        LOGGER.info("Getting all tasks: page_number->[{}], page_size->[{}], offset->[{}]",
+         pageable.getPageNumber(), pageable.getPageSize(), pageable.getOffset());
+
+        Page<Task> pageOfTasks = taskRepository.findAll(pageable);
+
+        List<TasksResponse> mappedTasks = new ArrayList<>();
+        for(Task primaryTask : pageOfTasks.getContent()) {
+            TasksResponse tasksResponse = mapTaskResponse(primaryTask);
+            mappedTasks.add(tasksResponse);
+        }
+
+        return new PageImpl<>(mappedTasks, pageable, pageOfTasks.getTotalElements());
+    }
 
 
 
 
 
 
+
+
+
+
+// get current day  tasks number, titles and all content
   public Integer getThisDayTotalNrOfTasks() {
     LOGGER.info("Getting total number of today tasks.");
     List<Task> allTasks = taskRepository.findAll();
@@ -131,8 +137,6 @@ public class TaskService {
 
     return thisDayTasksTitle;
 }
-  
-
 
 public Page<TasksResponse> getThisDayTasksWithPagination(Pageable pageable) {
     pageable = PageRequest.of(pageable.getPageNumber(), 16);
@@ -157,6 +161,40 @@ public Page<TasksResponse> getThisDayTasksWithPagination(Pageable pageable) {
 
 
 
+   //get overdue tasks number, titles and all content
+
+public Integer getNumberOfOverdueTasks(){
+    LOGGER.info("Get number of overdue tasks");
+
+    List<Task> allTasks = taskRepository.findAll();
+    LocalDate today = LocalDate.now();
+    int overdueNumber = 0;
+
+    for(Task task : allTasks){
+        if (task.getDeadline().isBefore(today)) {
+            overdueNumber++;
+        }
+    }
+
+    return overdueNumber;
+}
+
+public List<String> getOverdueTasksTitle(){
+    LOGGER.info("Getting overdue tasks title for homepage");
+    List<Task> allTasks = taskRepository.findAll();
+    
+    List<String> overdueTasks = new ArrayList<>();
+    LocalDate today = LocalDate.now();
+
+    for(Task task : allTasks){
+        if(task.getDeadline().isBefore(today)){
+            overdueTasks.add(task.getTitle());
+        }
+        
+    }  
+
+    return overdueTasks;
+}
 
 
 
@@ -173,14 +211,6 @@ public Page<TasksResponse> getThisDayTasksWithPagination(Pageable pageable) {
 
 
 
-
-
-  // public List<Task> getAllTasks (){
-    //     LOGGER.info("Getting all tasks");
-    //     List<Task> newList = taskRepository.findAll();
-
-    //     return newList;
-    // }
 
 
 

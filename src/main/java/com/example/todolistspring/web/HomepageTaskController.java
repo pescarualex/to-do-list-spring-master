@@ -69,12 +69,24 @@ public ResponseEntity<List<String>> thisDayTasksTitles(){
 
   
 
-    // @GetMapping("/tasks-titles")
-    // public ResponseEntity<List<Task>> getAllTasks(){
-    //     List<Task> tasks = taskService.getAllTasks();
 
-    //     return new ResponseEntity<>(tasks, HttpStatus.OK);
-    // }
+
+
+
+@GetMapping("/overdue-tasks-number")
+public ResponseEntity<Integer> overdueTasksNumber(){
+    Integer overduetasksNumber = taskService.getNumberOfOverdueTasks();
+    return new ResponseEntity<>(overduetasksNumber, HttpStatus.OK);
+}
+
+@GetMapping("/overdue-tasks-number/tasks-title")
+public ResponseEntity<List<String>> getOverdueTasksTitle(){
+    List<String> tasksTitle = taskService.getOverdueTasksTitle();
+
+    return new ResponseEntity<>(tasksTitle, HttpStatus.OK);
+}
+
+
 
 
 
