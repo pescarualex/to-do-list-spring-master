@@ -158,7 +158,27 @@ public Page<TasksResponse> getThisDayTasksWithPagination(Pageable pageable) {
     }
 
 
+    public Page<TasksResponse> getOverdueTasksWithPagination(Pageable pageable) {
+        pageable = PageRequest.of(pageable.getPageNumber(), 16);
+    
+        LOGGER.info("Getting overdue tasks: page_number->[{}], page_size->[{}], offset->[{}]",
+         pageable.getPageNumber(), pageable.getPageSize(), pageable.getOffset());
+         LocalDate today = LocalDate.now();
+        Page<Task> pageOfTasks = taskRepository.findAll(pageable);
+    
+    
+        List<TasksResponse> mappedTasks = new ArrayList<>();
 
+        for(Task primaryTask : pageOfTasks.getContent()) {
+                if (primaryTask.getDeadline().isBefore(today)) {
+                    TasksResponse tasksResponse = mapTaskResponse(primaryTask);
+                    mappedTasks.add(tasksResponse);
+                }
+            }
+    
+        return new PageImpl<>(mappedTasks, pageable, pageOfTasks.getTotalElements());
+    
+    }
 
 
    //get overdue tasks number, titles and all content

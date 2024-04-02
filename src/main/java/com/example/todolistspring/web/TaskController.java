@@ -94,4 +94,18 @@ public class TaskController {
 
         return new ResponseEntity<>(getThisDayTasks, HttpStatus.OK);
     }
+
+
+    @GetMapping("/overdue-tasks")
+    public ResponseEntity<Page<TasksResponse>> getOverdueTasksWPage(Pageable pageable) {
+        Page<TasksResponse> getThisDayTasks = taskService.getOverdueTasksWithPagination(pageable);
+    
+        return new ResponseEntity<>(getThisDayTasks, HttpStatus.OK);
+    }
+
+
+
+
 }
+
+
