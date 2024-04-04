@@ -4,12 +4,10 @@ import com.example.todolistspring.domain.Task;
 import com.example.todolistspring.exception.ResourceNotFoundException;
 import com.example.todolistspring.persistance.TaskRepository;
 import com.example.todolistspring.transfer.taskDTO.CreateTaskRequest;
-import com.example.todolistspring.transfer.taskDTO.SearchRequest;
 import com.example.todolistspring.transfer.taskDTO.TasksResponse;
 import com.example.todolistspring.transfer.taskDTO.UpdateTask;
 import com.example.todolistspring.transfer.taskDTO.UpdateTaskContent;
 
-import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;

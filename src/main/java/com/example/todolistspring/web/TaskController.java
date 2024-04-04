@@ -3,7 +3,6 @@ package com.example.todolistspring.web;
 import com.example.todolistspring.domain.Task;
 import com.example.todolistspring.service.TaskService;
 import com.example.todolistspring.transfer.taskDTO.CreateTaskRequest;
-import com.example.todolistspring.transfer.taskDTO.SearchRequest;
 import com.example.todolistspring.transfer.taskDTO.TasksResponse;
 import com.example.todolistspring.transfer.taskDTO.UpdateTask;
 import com.example.todolistspring.transfer.taskDTO.UpdateTaskContent;
@@ -15,10 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 
 @CrossOrigin
 @RestController
