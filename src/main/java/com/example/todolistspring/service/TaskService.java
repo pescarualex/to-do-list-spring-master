@@ -4,6 +4,7 @@ import com.example.todolistspring.domain.Task;
 import com.example.todolistspring.exception.ResourceNotFoundException;
 import com.example.todolistspring.persistance.TaskRepository;
 import com.example.todolistspring.transfer.taskDTO.CreateTaskRequest;
+import com.example.todolistspring.transfer.taskDTO.SearchRequest;
 import com.example.todolistspring.transfer.taskDTO.TasksResponse;
 import com.example.todolistspring.transfer.taskDTO.UpdateTask;
 import com.example.todolistspring.transfer.taskDTO.UpdateTaskContent;
@@ -80,13 +81,18 @@ public class TaskService {
         return tasksTitle;
   }
 
-    public Page<TasksResponse> findTasksWithPagination(Pageable pageable) {
+
+
+
+
+    public Page<TasksResponse> findTasksWithPagination(String task, Pageable pageable) {
         pageable = PageRequest.of(pageable.getPageNumber(), 16);
 
         LOGGER.info("Getting all tasks: page_number->[{}], page_size->[{}], offset->[{}]",
          pageable.getPageNumber(), pageable.getPageSize(), pageable.getOffset());
 
-        Page<Task> pageOfTasks = taskRepository.findAll(pageable);
+        Page<Task> pageOfTasks;
+        pageOfTasks = taskRepository.findByTitleContainingIgnoreCase(task, pageable);
 
         List<TasksResponse> mappedTasks = new ArrayList<>();
         for(Task primaryTask : pageOfTasks.getContent()) {
@@ -96,11 +102,6 @@ public class TaskService {
 
         return new PageImpl<>(mappedTasks, pageable, pageOfTasks.getTotalElements());
     }
-
-
-
-
-
 
 
 
@@ -138,33 +139,35 @@ public class TaskService {
     return thisDayTasksTitle;
 }
 
-public Page<TasksResponse> getThisDayTasksWithPagination(Pageable pageable) {
+public Page<TasksResponse> getThisDayTasksWithPagination(String title, Pageable pageable) {
     pageable = PageRequest.of(pageable.getPageNumber(), 16);
 
     LOGGER.info("Getting today all tasks: page_number->[{}], page_size->[{}], offset->[{}]",
      pageable.getPageNumber(), pageable.getPageSize(), pageable.getOffset());
      LocalDate today = LocalDate.now();
-    Page<Task> pageOfTasks = taskRepository.findAllByDeadline(today, pageable);
-
+    Page<Task> pageOfTasks = taskRepository.findByTitleContainingIgnoreCase(title, pageable);
 
     List<TasksResponse> mappedTasks = new ArrayList<>();
     for(Task primaryTask : pageOfTasks.getContent()) {
-            TasksResponse tasksResponse = mapTaskResponse(primaryTask);
-            mappedTasks.add(tasksResponse);
+            if (primaryTask.getDeadline().isEqual(today)) {
+                TasksResponse tasksResponse = mapTaskResponse(primaryTask);
+                mappedTasks.add(tasksResponse);
+            }
+
+            
         }
 
     return new PageImpl<>(mappedTasks, pageable, pageOfTasks.getTotalElements());
-
     }
 
 
-    public Page<TasksResponse> getOverdueTasksWithPagination(Pageable pageable) {
+    public Page<TasksResponse> getOverdueTasksWithPagination(String title, Pageable pageable) {
         pageable = PageRequest.of(pageable.getPageNumber(), 16);
     
         LOGGER.info("Getting overdue tasks: page_number->[{}], page_size->[{}], offset->[{}]",
          pageable.getPageNumber(), pageable.getPageSize(), pageable.getOffset());
          LocalDate today = LocalDate.now();
-        Page<Task> pageOfTasks = taskRepository.findAll(pageable);
+        Page<Task> pageOfTasks = taskRepository.findByTitleContainingIgnoreCase(title, pageable);
     
     
         List<TasksResponse> mappedTasks = new ArrayList<>();

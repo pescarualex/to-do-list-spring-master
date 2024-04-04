@@ -3,6 +3,7 @@ package com.example.todolistspring.web;
 import com.example.todolistspring.domain.Task;
 import com.example.todolistspring.service.TaskService;
 import com.example.todolistspring.transfer.taskDTO.CreateTaskRequest;
+import com.example.todolistspring.transfer.taskDTO.SearchRequest;
 import com.example.todolistspring.transfer.taskDTO.TasksResponse;
 import com.example.todolistspring.transfer.taskDTO.UpdateTask;
 import com.example.todolistspring.transfer.taskDTO.UpdateTaskContent;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 @CrossOrigin
 @RestController
@@ -38,9 +40,9 @@ public class TaskController {
     }
 
     // TODO: change this path if it is necessary
-    @GetMapping()
-    public ResponseEntity<Page<TasksResponse>> getAPageOfTasks(Pageable pageable) {
-        Page<TasksResponse> findTasksWithPagination = taskService.findTasksWithPagination(pageable);
+    @GetMapping("/any")
+    public ResponseEntity<Page<TasksResponse>> getAPageOfTasks(@RequestParam(name = "title") String title, Pageable pageable) {
+        Page<TasksResponse> findTasksWithPagination = taskService.findTasksWithPagination(title, pageable);
 
         return new ResponseEntity<>(findTasksWithPagination, HttpStatus.OK);
     }
@@ -89,16 +91,16 @@ public class TaskController {
 
 
     @GetMapping("/this-day-tasks")
-    public ResponseEntity<Page<TasksResponse>> getThisDayTasksWPage(Pageable pageable) {
-        Page<TasksResponse> getThisDayTasks = taskService.getThisDayTasksWithPagination(pageable);
+    public ResponseEntity<Page<TasksResponse>> getThisDayTasksWPage(@RequestParam(name = "title") String title,Pageable pageable) {
+        Page<TasksResponse> getThisDayTasks = taskService.getThisDayTasksWithPagination(title, pageable);
 
         return new ResponseEntity<>(getThisDayTasks, HttpStatus.OK);
     }
 
 
     @GetMapping("/overdue-tasks")
-    public ResponseEntity<Page<TasksResponse>> getOverdueTasksWPage(Pageable pageable) {
-        Page<TasksResponse> getThisDayTasks = taskService.getOverdueTasksWithPagination(pageable);
+    public ResponseEntity<Page<TasksResponse>> getOverdueTasksWPage(@RequestParam(name = "title") String title,Pageable pageable) {
+        Page<TasksResponse> getThisDayTasks = taskService.getOverdueTasksWithPagination(title, pageable);
     
         return new ResponseEntity<>(getThisDayTasks, HttpStatus.OK);
     }

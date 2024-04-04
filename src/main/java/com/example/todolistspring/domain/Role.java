@@ -3,10 +3,12 @@ package com.example.todolistspring.domain;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Table
 public class Role {
 
     public Role() {
