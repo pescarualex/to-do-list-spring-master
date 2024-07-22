@@ -8,9 +8,8 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 public class User {
-    
-    public User() {
-    }
+
+    public User() {}
 
     @Id
     @GeneratedValue
@@ -77,23 +76,20 @@ public class User {
         this.password = password;
     }
 
-    // public Role getRole() {
-    //     return role;
-    // }
-
-    // public void setRole(Role role) {
-    //     this.role = role;
-    // }
-
     @Override
     public String toString() {
-        return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
-                + ", password=" + password + "]";
+        return (
+            "User [id=" +
+            id +
+            ", firstName=" +
+            firstName +
+            ", lastName=" +
+            lastName +
+            ", email=" +
+            email +
+            ", password=" +
+            password +
+            "]"
+        );
     }
-
-
-
-
-    
-
 }

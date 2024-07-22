@@ -11,8 +11,7 @@ import javax.validation.constraints.NotNull;
 @Table
 public class Role {
 
-    public Role() {
-    }
+    public Role() {}
 
     @Id
     @GeneratedValue
@@ -42,7 +41,4 @@ public class Role {
     public String toString() {
         return "Role [id=" + id + ", userRole=" + userRole + "]";
     }
-    
-
-    
 }

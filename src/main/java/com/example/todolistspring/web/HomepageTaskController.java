@@ -1,7 +1,7 @@
 package com.example.todolistspring.web;
 
+import com.example.todolistspring.service.TaskService;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.example.todolistspring.service.TaskService;
 
 @CrossOrigin
 @RestController
@@ -24,67 +22,44 @@ public class HomepageTaskController {
         this.taskService = taskService;
     }
 
-@GetMapping("/total-all-tasks-number")
-public ResponseEntity<Integer> totalNrOfTasks() {
-    Integer allTasks = taskService.getTotalNrOfTasks();
+    @GetMapping("/total-all-tasks-number")
+    public ResponseEntity<Integer> totalNrOfTasks() {
+        Integer allTasks = taskService.getTotalNrOfTasks();
 
-    return new ResponseEntity<Integer>(allTasks, HttpStatus.OK);
-}
+        return new ResponseEntity<Integer>(allTasks, HttpStatus.OK);
+    }
 
+    @GetMapping("/total-task-number/all-tasks-titles")
+    public ResponseEntity<List<String>> allTasksTitles() {
+        List<String> tasksTitle = taskService.getAllTasksTitles();
 
+        return new ResponseEntity<>(tasksTitle, HttpStatus.OK);
+    }
 
+    @GetMapping("/total-this-day-tasks-number")
+    public ResponseEntity<Integer> thisDayTotalNrOfTasks() {
+        Integer allTasks = taskService.getThisDayTotalNrOfTasks();
 
-@GetMapping("/total-task-number/all-tasks-titles")
-public ResponseEntity<List<String>> allTasksTitles(){
-    List<String> tasksTitle = taskService.getAllTasksTitles();
+        return new ResponseEntity<Integer>(allTasks, HttpStatus.OK);
+    }
 
-    return new ResponseEntity<>(tasksTitle, HttpStatus.OK);
-}
+    @GetMapping("/total-task-number/this-day-tasks-titles")
+    public ResponseEntity<List<String>> thisDayTasksTitles() {
+        List<String> tasksTitle = taskService.getThisDayTasksTitle();
 
+        return new ResponseEntity<>(tasksTitle, HttpStatus.OK);
+    }
 
+    @GetMapping("/overdue-tasks-number")
+    public ResponseEntity<Integer> overdueTasksNumber() {
+        Integer overduetasksNumber = taskService.getNumberOfOverdueTasks();
+        return new ResponseEntity<>(overduetasksNumber, HttpStatus.OK);
+    }
 
+    @GetMapping("/overdue-tasks-number/tasks-title")
+    public ResponseEntity<List<String>> getOverdueTasksTitle() {
+        List<String> tasksTitle = taskService.getOverdueTasksTitle();
 
-
-
-
-
-@GetMapping("/total-this-day-tasks-number")
-public ResponseEntity<Integer> thisDayTotalNrOfTasks() {
-    Integer allTasks = taskService.getThisDayTotalNrOfTasks();
-
-    return new ResponseEntity<Integer>(allTasks, HttpStatus.OK);
-}
-
-
-@GetMapping("/total-task-number/this-day-tasks-titles")
-public ResponseEntity<List<String>> thisDayTasksTitles(){
-    List<String> tasksTitle = taskService.getThisDayTasksTitle();
-
-    return new ResponseEntity<>(tasksTitle, HttpStatus.OK);
-}
-
-  
-
-
-
-
-
-@GetMapping("/overdue-tasks-number")
-public ResponseEntity<Integer> overdueTasksNumber(){
-    Integer overduetasksNumber = taskService.getNumberOfOverdueTasks();
-    return new ResponseEntity<>(overduetasksNumber, HttpStatus.OK);
-}
-
-@GetMapping("/overdue-tasks-number/tasks-title")
-public ResponseEntity<List<String>> getOverdueTasksTitle(){
-    List<String> tasksTitle = taskService.getOverdueTasksTitle();
-
-    return new ResponseEntity<>(tasksTitle, HttpStatus.OK);
-}
-
-
-
-
-
-
+        return new ResponseEntity<>(tasksTitle, HttpStatus.OK);
+    }
 }

@@ -7,7 +7,9 @@ import com.example.todolistspring.transfer.taskDTO.CreateTaskRequest;
 import com.example.todolistspring.transfer.taskDTO.TasksResponse;
 import com.example.todolistspring.transfer.taskDTO.UpdateTask;
 import com.example.todolistspring.transfer.taskDTO.UpdateTaskContent;
-
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -19,14 +21,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 public class TaskService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TaskService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+        TaskService.class
+    );
 
     private final TaskRepository taskRepository;
 
@@ -50,12 +50,12 @@ public class TaskService {
     public Task getTask(long id) {
         LOGGER.info("Get task with id: " + id);
 
-        return taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task " + id + " does not exist"));
+        return taskRepository
+            .findById(id)
+            .orElseThrow(() ->
+                new ResourceNotFoundException("Task " + id + " does not exist")
+            );
     }
-
-
-
 
     // get all tasks number, titles and all content
 
@@ -66,174 +66,181 @@ public class TaskService {
         return allTasks.size();
     }
 
-
-    public List<String> getAllTasksTitles(){
+    public List<String> getAllTasksTitles() {
         LOGGER.info("Getting all tasks title for homepage");
         List<Task> allTasks = taskRepository.findAll();
-        
+
         List<String> tasksTitle = new ArrayList<>();
-        for(Task task : allTasks){
+        for (Task task : allTasks) {
             tasksTitle.add(task.getTitle());
-        }  
+        }
 
         return tasksTitle;
-  }
+    }
 
-
-
-
-
-    public Page<TasksResponse> findTasksWithPagination(String task, Pageable pageable) {
+    public Page<TasksResponse> findTasksWithPagination(
+        String task,
+        Pageable pageable
+    ) {
         pageable = PageRequest.of(pageable.getPageNumber(), 16);
 
-        LOGGER.info("Getting all tasks: page_number->[{}], page_size->[{}], offset->[{}]",
-         pageable.getPageNumber(), pageable.getPageSize(), pageable.getOffset());
+        LOGGER.info(
+            "Getting all tasks: page_number->[{}], page_size->[{}], offset->[{}]",
+            pageable.getPageNumber(),
+            pageable.getPageSize(),
+            pageable.getOffset()
+        );
 
         Page<Task> pageOfTasks;
-        pageOfTasks = taskRepository.findByTitleContainingIgnoreCase(task, pageable);
+        pageOfTasks = taskRepository.findByTitleContainingIgnoreCase(
+            task,
+            pageable
+        );
 
         List<TasksResponse> mappedTasks = new ArrayList<>();
-        for(Task primaryTask : pageOfTasks.getContent()) {
+        for (Task primaryTask : pageOfTasks.getContent()) {
             TasksResponse tasksResponse = mapTaskResponse(primaryTask);
             mappedTasks.add(tasksResponse);
         }
 
-        return new PageImpl<>(mappedTasks, pageable, pageOfTasks.getTotalElements());
+        return new PageImpl<>(
+            mappedTasks,
+            pageable,
+            pageOfTasks.getTotalElements()
+        );
     }
 
+    // get current day  tasks number, titles and all content
+    public Integer getThisDayTotalNrOfTasks() {
+        LOGGER.info("Getting total number of today tasks.");
+        List<Task> allTasks = taskRepository.findAll();
+        LocalDate today = LocalDate.now();
+        int countTask = 0;
 
-
-
-
-// get current day  tasks number, titles and all content
-  public Integer getThisDayTotalNrOfTasks() {
-    LOGGER.info("Getting total number of today tasks.");
-    List<Task> allTasks = taskRepository.findAll();
-    LocalDate today = LocalDate.now();
-    int countTask = 0;
-
-    for(Task task : allTasks){
-        if (task.getDeadline().isEqual(today)) {
-            countTask++;
+        for (Task task : allTasks) {
+            if (task.getDeadline().isEqual(today)) {
+                countTask++;
+            }
         }
+        return countTask;
     }
-    return countTask;
-}
 
-  public List<String> getThisDayTasksTitle(){
-    LOGGER.info("Getting today tasks title for homepage");
-    List<Task> allTasks = taskRepository.findAll();
-    
-    List<String> thisDayTasksTitle = new ArrayList<>();
-    LocalDate today = LocalDate.now();
+    public List<String> getThisDayTasksTitle() {
+        LOGGER.info("Getting today tasks title for homepage");
+        List<Task> allTasks = taskRepository.findAll();
 
-    for(Task task : allTasks){
-        if(task.getDeadline().isEqual(today)){
-            thisDayTasksTitle.add(task.getTitle());
+        List<String> thisDayTasksTitle = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+
+        for (Task task : allTasks) {
+            if (task.getDeadline().isEqual(today)) {
+                thisDayTasksTitle.add(task.getTitle());
+            }
         }
-        
-    }  
 
-    return thisDayTasksTitle;
-}
+        return thisDayTasksTitle;
+    }
 
-public Page<TasksResponse> getThisDayTasksWithPagination(String title, Pageable pageable) {
-    pageable = PageRequest.of(pageable.getPageNumber(), 16);
+    public Page<TasksResponse> getThisDayTasksWithPagination(
+        String title,
+        Pageable pageable
+    ) {
+        pageable = PageRequest.of(pageable.getPageNumber(), 16);
 
-    LOGGER.info("Getting today all tasks: page_number->[{}], page_size->[{}], offset->[{}]",
-     pageable.getPageNumber(), pageable.getPageSize(), pageable.getOffset());
-     LocalDate today = LocalDate.now();
-    Page<Task> pageOfTasks = taskRepository.findByTitleContainingIgnoreCase(title, pageable);
+        LOGGER.info(
+            "Getting today all tasks: page_number->[{}], page_size->[{}], offset->[{}]",
+            pageable.getPageNumber(),
+            pageable.getPageSize(),
+            pageable.getOffset()
+        );
+        LocalDate today = LocalDate.now();
+        Page<Task> pageOfTasks = taskRepository.findByTitleContainingIgnoreCase(
+            title,
+            pageable
+        );
 
-    List<TasksResponse> mappedTasks = new ArrayList<>();
-    for(Task primaryTask : pageOfTasks.getContent()) {
+        List<TasksResponse> mappedTasks = new ArrayList<>();
+        for (Task primaryTask : pageOfTasks.getContent()) {
             if (primaryTask.getDeadline().isEqual(today)) {
                 TasksResponse tasksResponse = mapTaskResponse(primaryTask);
                 mappedTasks.add(tasksResponse);
             }
-
-            
         }
 
-    return new PageImpl<>(mappedTasks, pageable, pageOfTasks.getTotalElements());
+        return new PageImpl<>(
+            mappedTasks,
+            pageable,
+            pageOfTasks.getTotalElements()
+        );
     }
 
-
-    public Page<TasksResponse> getOverdueTasksWithPagination(String title, Pageable pageable) {
+    public Page<TasksResponse> getOverdueTasksWithPagination(
+        String title,
+        Pageable pageable
+    ) {
         pageable = PageRequest.of(pageable.getPageNumber(), 16);
-    
-        LOGGER.info("Getting overdue tasks: page_number->[{}], page_size->[{}], offset->[{}]",
-         pageable.getPageNumber(), pageable.getPageSize(), pageable.getOffset());
-         LocalDate today = LocalDate.now();
-        Page<Task> pageOfTasks = taskRepository.findByTitleContainingIgnoreCase(title, pageable);
-    
-    
+
+        LOGGER.info(
+            "Getting overdue tasks: page_number->[{}], page_size->[{}], offset->[{}]",
+            pageable.getPageNumber(),
+            pageable.getPageSize(),
+            pageable.getOffset()
+        );
+        LocalDate today = LocalDate.now();
+        Page<Task> pageOfTasks = taskRepository.findByTitleContainingIgnoreCase(
+            title,
+            pageable
+        );
+
         List<TasksResponse> mappedTasks = new ArrayList<>();
 
-        for(Task primaryTask : pageOfTasks.getContent()) {
-                if (primaryTask.getDeadline().isBefore(today)) {
-                    TasksResponse tasksResponse = mapTaskResponse(primaryTask);
-                    mappedTasks.add(tasksResponse);
-                }
+        for (Task primaryTask : pageOfTasks.getContent()) {
+            if (primaryTask.getDeadline().isBefore(today)) {
+                TasksResponse tasksResponse = mapTaskResponse(primaryTask);
+                mappedTasks.add(tasksResponse);
             }
-    
-        return new PageImpl<>(mappedTasks, pageable, pageOfTasks.getTotalElements());
-    
+        }
+
+        return new PageImpl<>(
+            mappedTasks,
+            pageable,
+            pageOfTasks.getTotalElements()
+        );
     }
 
+    //get overdue tasks number, titles and all content
 
-   //get overdue tasks number, titles and all content
+    public Integer getNumberOfOverdueTasks() {
+        LOGGER.info("Get number of overdue tasks");
 
-public Integer getNumberOfOverdueTasks(){
-    LOGGER.info("Get number of overdue tasks");
+        List<Task> allTasks = taskRepository.findAll();
+        LocalDate today = LocalDate.now();
+        int overdueNumber = 0;
 
-    List<Task> allTasks = taskRepository.findAll();
-    LocalDate today = LocalDate.now();
-    int overdueNumber = 0;
-
-    for(Task task : allTasks){
-        if (task.getDeadline().isBefore(today)) {
-            overdueNumber++;
+        for (Task task : allTasks) {
+            if (task.getDeadline().isBefore(today)) {
+                overdueNumber++;
+            }
         }
+
+        return overdueNumber;
     }
 
-    return overdueNumber;
-}
+    public List<String> getOverdueTasksTitle() {
+        LOGGER.info("Getting overdue tasks title for homepage");
+        List<Task> allTasks = taskRepository.findAll();
 
-public List<String> getOverdueTasksTitle(){
-    LOGGER.info("Getting overdue tasks title for homepage");
-    List<Task> allTasks = taskRepository.findAll();
-    
-    List<String> overdueTasks = new ArrayList<>();
-    LocalDate today = LocalDate.now();
+        List<String> overdueTasks = new ArrayList<>();
+        LocalDate today = LocalDate.now();
 
-    for(Task task : allTasks){
-        if(task.getDeadline().isBefore(today)){
-            overdueTasks.add(task.getTitle());
+        for (Task task : allTasks) {
+            if (task.getDeadline().isBefore(today)) {
+                overdueTasks.add(task.getTitle());
+            }
         }
-        
-    }  
 
-    return overdueTasks;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return overdueTasks;
+    }
 
     public Task updateTask(long id, UpdateTask request) {
         LOGGER.info("Update task " + id + " with " + request);
@@ -246,7 +253,12 @@ public List<String> getOverdueTasksTitle(){
     }
 
     public Task updateTaskContent(long id, UpdateTaskContent requContent) {
-        LOGGER.info("Update task \"{}\" with content: Title - \"{}\", Description - \"{}\"", id, requContent.getTitle(), requContent.getDescription());
+        LOGGER.info(
+            "Update task \"{}\" with content: Title - \"{}\", Description - \"{}\"",
+            id,
+            requContent.getTitle(),
+            requContent.getDescription()
+        );
 
         Task task = taskRepository.getById(id);
 
@@ -255,8 +267,6 @@ public List<String> getOverdueTasksTitle(){
 
         return taskRepository.save(task);
     }
-
-
 
     @Transactional
     public void deleteTask(long id) {
